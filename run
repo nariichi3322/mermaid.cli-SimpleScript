@@ -1,0 +1,52 @@
+#!/bin/bash
+
+outpath="./Out"
+puppeteerConfigFile="./puppeteer-config.json"
+format="png"
+
+if [ -z "$1" ]
+  then
+    echo "Usage: $0 [INPUT_FILE_PATH] [FORMAT]"
+    exit 1
+fi
+
+if [ -n "$2" ]
+  then
+    format=${2}
+fi
+
+fullfilename="${1##*/}"
+extension="${1##*.}"
+filename="${fullfilename%.*}"
+
+if [ $extension != "mmd" ] && [ $extension != "MMD" ]
+  then
+    echo "Invalid input file. Make sure it is a mmd file."
+    exit 1
+fi;
+
+if [ ! -d $outpath ]
+  then
+    mkdir $outpath
+fi;
+
+if [ ! -d $outpath/$filename ]
+  then
+    mkdir $outpath/$filename
+fi;
+
+if [  -e $puppeteerConfigFile ]
+  then
+    echo "Find puppeteer-config.json."
+    puppeteerConfig="-p puppeteer-config.json"
+else
+    puppeteerConfig=""
+fi;
+
+echo "Starting."
+
+./mmdc $puppeteerConfig -i $1 -o $outpath/$filename/$filename.$2
+
+echo "Finished."
+
+exit 0
